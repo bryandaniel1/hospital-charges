@@ -1,0 +1,171 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="content" >
+        <h2>Find Outpatient Charges by Region</h2>
+        <div id="regionCharges">
+            <h:form>
+                <h:selectOneMenu style="font-size:1.1em;" id="state" styleClass="stateSelectMenu" value="#{outpatientBean.outpatientState}">
+                    <f:selectItem itemValue="" itemLabel="Choose a state" />    
+                    <f:selectItem itemValue="AK" itemLabel="AK" />
+                    <f:selectItem itemValue="AL" itemLabel="AL" />
+                    <f:selectItem itemValue="AR" itemLabel="AR" />
+                    <f:selectItem itemValue="AZ" itemLabel="AZ" />
+                    <f:selectItem itemValue="CA" itemLabel="CA" />
+                    <f:selectItem itemValue="CO" itemLabel="CO" />
+                    <f:selectItem itemValue="CT" itemLabel="CT" />
+                    <f:selectItem itemValue="DC" itemLabel="DC" />
+                    <f:selectItem itemValue="DE" itemLabel="DE" />
+                    <f:selectItem itemValue="FL" itemLabel="FL" />
+                    <f:selectItem itemValue="GA" itemLabel="GA" />
+                    <f:selectItem itemValue="HI" itemLabel="HI" />
+                    <f:selectItem itemValue="IA" itemLabel="IA" />
+                    <f:selectItem itemValue="ID" itemLabel="ID" />
+                    <f:selectItem itemValue="IL" itemLabel="IL" />
+                    <f:selectItem itemValue="IN" itemLabel="IN" />
+                    <f:selectItem itemValue="KS" itemLabel="KS" />
+                    <f:selectItem itemValue="KY" itemLabel="KY" />
+                    <f:selectItem itemValue="LA" itemLabel="LA" />
+                    <f:selectItem itemValue="MA" itemLabel="MA" />
+                    <f:selectItem itemValue="MD" itemLabel="MD" />
+                    <f:selectItem itemValue="ME" itemLabel="ME" />
+                    <f:selectItem itemValue="MI" itemLabel="MI" />
+                    <f:selectItem itemValue="MN" itemLabel="MN" />
+                    <f:selectItem itemValue="MO" itemLabel="MO" />
+                    <f:selectItem itemValue="MS" itemLabel="MS" />
+                    <f:selectItem itemValue="MT" itemLabel="MT" />
+                    <f:selectItem itemValue="NC" itemLabel="NC" />
+                    <f:selectItem itemValue="ND" itemLabel="ND" />
+                    <f:selectItem itemValue="NE" itemLabel="NE" />
+                    <f:selectItem itemValue="NH" itemLabel="NH" />
+                    <f:selectItem itemValue="NJ" itemLabel="NJ" />
+                    <f:selectItem itemValue="NM" itemLabel="NM" />
+                    <f:selectItem itemValue="NV" itemLabel="NV" />
+                    <f:selectItem itemValue="NY" itemLabel="NY" />
+                    <f:selectItem itemValue="OH" itemLabel="OH" />
+                    <f:selectItem itemValue="OK" itemLabel="OK" />
+                    <f:selectItem itemValue="OR" itemLabel="OR" />
+                    <f:selectItem itemValue="PA" itemLabel="PA" />
+                    <f:selectItem itemValue="RI" itemLabel="RI" />
+                    <f:selectItem itemValue="SC" itemLabel="SC" />
+                    <f:selectItem itemValue="SD" itemLabel="SD" />
+                    <f:selectItem itemValue="TN" itemLabel="TN" />
+                    <f:selectItem itemValue="TX" itemLabel="TX" />
+                    <f:selectItem itemValue="UT" itemLabel="UT" />
+                    <f:selectItem itemValue="VA" itemLabel="VA" />
+                    <f:selectItem itemValue="VT" itemLabel="VT" />
+                    <f:selectItem itemValue="WA" itemLabel="WA" />
+                    <f:selectItem itemValue="WI" itemLabel="WI" />
+                    <f:selectItem itemValue="WV" itemLabel="WV" />
+                    <f:selectItem itemValue="WY" itemLabel="WY" />
+
+                    <f:ajax listener="#{outpatientBean.showCities()}" execute="@form" render="cities apcs results" onevent="handleRegionalStateSelectAjaxCall" />
+                </h:selectOneMenu>
+                <noscript>
+                    <h:commandButton styleClass="button ui-button" action="#{outpatientBean.showCitiesAndReturn()}" value="Submit"></h:commandButton>
+                </noscript>
+                <h:message for="state" styleClass="error" />                      
+                <h:panelGroup id="cities">
+                    <h:panelGroup rendered="#{outpatientBean.outpatientState eq 'MD'}">
+                        <p>Outpatient data for Maryland hospitals is not provided as this  
+                            state operates under a Medicare waiver and is exempt from 
+                            the Outpatient Prospective Payment System. Hospitals in Maryland 
+                            are reimbursed according to the 
+                            <a target="_blank" href="http://innovation.cms.gov/initiatives/Maryland-All-Payer-Model/">Maryland All-Payer Model</a>.
+                        </p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not empty outpatientBean.outpatientCities}">
+                        <p><h:outputText value="#{outpatientBean.outpatientState}" /></p>
+                        <h:selectOneMenu style="font-size:1.1em;" id="city" styleClass="citySelectMenu" value="#{outpatientBean.outpatientCity}">
+                            <f:selectItem itemValue="" itemLabel="Choose a city" />
+                            <f:selectItems value="#{outpatientBean.outpatientCities}" var="c" 
+                                           itemLabel="#{c}" itemValue="#{c}" />
+                            <f:ajax listener="#{outpatientBean.showApcs()}" execute="@form" render="apcs results" onevent="function(data) { handleRegionalCitySelectAjaxCall(data, 'outpatient') }" />                  
+                        </h:selectOneMenu>
+                        <noscript>
+                            <h:commandButton styleClass="button ui-button" action="#{outpatientBean.showApcsAndReturn()}" value="Submit"></h:commandButton>
+                        </noscript>
+                        <h:message for="city" styleClass="error" />
+                    </h:panelGroup>
+                </h:panelGroup>
+                <h:panelGroup id="apcs">                    
+                    <h:panelGroup id="apcsForm" rendered="#{not empty outpatientBean.apcs}">
+                        <p><h:outputText value="#{outpatientBean.outpatientCity}" /></p>
+                        <h:selectOneMenu style="font-size:1.1em;width:100%;" id="apc" styleClass="apcSelectMenu" value="#{outpatientBean.apcId}">
+                            <f:selectItem itemValue="" itemLabel="Choose an ambulatory payment classification" />
+                            <f:selectItems value="#{outpatientBean.apcs}" var="a" 
+                                           itemLabel="#{a.apcDefinition}" itemValue="#{a.apcId}" />
+                            <f:ajax listener="#{outpatientBean.showResults()}" execute="@form" render="results" onevent="handleRegionalAPCSelectAjaxCall" />
+                        </h:selectOneMenu>
+                        <noscript>
+                            <h:commandButton styleClass="button ui-button" action="#{outpatientBean.showResultsAndReturn()}" value="Submit"></h:commandButton>
+                        </noscript>
+                        <h:message for="apc" styleClass="error" />
+                    </h:panelGroup>
+                </h:panelGroup>
+                <h:panelGroup id="results">
+                    <h:panelGroup style="font-size:1.1em;width:100%;margin-top:2%;" 
+                                  rendered="#{not empty outpatientBean.results}">
+                        <h3>Regional Charges</h3>
+                        <h4><h:outputText value="${outpatientBean.selectedApcDefinition}"/></h4>
+                        <h:dataTable id="regionTableId" styleClass="regionTable display responsive" width="100%" value="#{outpatientBean.results}" var="result">
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Hospital" styleClass="dataTableHeader"/></f:facet>
+                                <h:outputText value="${result.provider.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Address" styleClass="dataTableHeader"/></f:facet>
+                                <h:outputText value="${result.provider.street}"/><br/>
+                                <h:outputText value="${result.provider.city}, ${result.provider.state} ${result.provider.zipCode}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Average Charges" styleClass="dataTableHeader"/></f:facet>
+                                <h:outputText styleClass="prices" value="&#36;${result.apc.avgCharges}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Average Payments" styleClass="dataTableHeader"/></f:facet>
+                                <h:outputText styleClass="prices" value="&#36;${result.apc.avgPayments}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Map" styleClass="dataTableHeader"/></f:facet>
+                                <h:commandButton styleClass="button ui-button" value="View Map" action="#{mapBean.viewMap}" >
+                                    <f:setPropertyActionListener target="#{mapBean.locationStreetAndCity}" 
+                                                                 value="${result.provider.street}, ${result.provider.city}, " />
+                                    <f:setPropertyActionListener target="#{mapBean.locationState}" 
+                                                                 value="${result.provider.state}" />
+                                    <f:setPropertyActionListener target="#{mapBean.mapLocationName}" 
+                                                                 value="${result.provider.name}" />
+                                </h:commandButton>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </div>
+        <div class="text">
+            <h3>About This Tool</h3>
+            <p>
+                This application allows you to compare charges and average Medicare 
+                payments for a selected outpatient treatment by providers in a 
+                selected geographic region of the United States.  
+                To use this tool, simply select the state, the city, and the 
+                ambulatory payment classification (APC) you are searching for.<br/><br/>                    
+                The data for this comparison tool was retrieved from the 2015 
+                <a target="_blank" href="https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Outpatient.html" >
+                    Medicare Provider Utilization and Payment Data</a> 
+                for outpatient hospital charges released by the Centers for 
+                Medicare &amp; Medicaid Services (CMS).  This data released by 
+                CMS includes the 28 most common APCs for Medicare patients.<br/><br/>                            
+                To compare outpatient charges and payment data for two specific 
+                providers in the United States, you may select the navigation button 
+                labeled &quot;Compare Two Outpatient Charges&quot;.<br/><br/>                                    
+                To find inpatient charges and payment data, you can navigate to 
+                &quot;Find Inpatient Charges By Region&quot; or &quot;Compare Two Inpatient Charges&quot;.<br/><br/>                                            
+                The &quot;Statistics&quot; page allows you to view statistics for a chosen inpatient 
+                or outpatient charge.
+            </p>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,301 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="content" >
+        <h2>Compare Two Inpatient Charges</h2>
+        <div class="compare">
+            <h:form>
+                <div style="width:100%;">
+                    <h:selectOneMenu style="font-size:1.1em;" id="drg" styleClass="drgsToCompare" value="#{inpatientComparisonBean.drgId}">
+                        <f:selectItem itemValue="" itemLabel="Choose a diagnosis-related group" />
+                        <f:selectItems value="#{inpatientComparisonBean.drgs}" var="d" 
+                                       itemLabel="#{d.drgDefinition}" itemValue="#{d.drgId}" />
+                        <f:ajax listener="#{inpatientComparisonBean.showStates()}" execute="@form" render="drgChoice leftCharge rightCharge" onevent="handleComparisonSelectAjaxCall" />                  
+                    </h:selectOneMenu>
+                    <noscript>
+                        <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showStatesAndReturn()}" value="Submit"></h:commandButton>
+                    </noscript>
+                    <h:message for="drg" styleClass="error" />
+                </div>
+                <h:panelGroup id="drgChoice">
+                    <h:panelGroup rendered="#{not empty inpatientComparisonBean.drgDefinition}">
+                        <h3 class="compare">#{inpatientComparisonBean.drgDefinition}</h3>                    
+                    </h:panelGroup>                    
+                </h:panelGroup>
+
+                <h:panelGroup id="leftCharge" styleClass="leftCharge">
+                    <h:panelGroup rendered="#{not empty inpatientComparisonBean.states}">
+                        <h:selectOneMenu style="font-size:1.1em;" id="state" styleClass="stateToCompare" value="#{inpatientComparisonBean.state}">
+                            <f:selectItem itemValue="" itemLabel="Choose a state" />
+                            <f:selectItems value="#{inpatientComparisonBean.states}" var="s" 
+                                           itemLabel="#{s}" itemValue="#{s}" />
+                            <f:ajax listener="#{inpatientComparisonBean.showCities()}" execute="@form" render="cities providers leftResult" onevent="handleStateToCompareSelectAjaxCall" />                  
+                        </h:selectOneMenu>
+                        <noscript>
+                            <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showCitiesAndReturn()}" value="Submit"></h:commandButton>
+                        </noscript>
+                        <h:message for="state" styleClass="error" />
+                        <h:panelGroup id="cities">
+                            <h:panelGroup rendered="#{not empty inpatientComparisonBean.cities}">
+                                <p><h:outputText value="#{inpatientComparisonBean.state}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="city" styleClass="cityToCompare" value="#{inpatientComparisonBean.city}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a city" />
+                                    <f:selectItems value="#{inpatientComparisonBean.cities}" var="c" 
+                                                   itemLabel="#{c}" itemValue="#{c}" />
+                                    <f:ajax listener="#{inpatientComparisonBean.showProviders()}" execute="@form" render="providers leftResult" onevent="handleCityToCompareSelectAjaxCall" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showProvidersAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="city" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="providers">
+                            <h:panelGroup rendered="#{not empty inpatientComparisonBean.providers}">
+                                <p><h:outputText value="#{inpatientComparisonBean.city}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="provider" styleClass="providerToCompare" value="#{inpatientComparisonBean.providerId}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a provider" />
+                                    <f:selectItems value="#{inpatientComparisonBean.providers}" var="p" 
+                                                   itemLabel="#{p.name}" itemValue="#{p.id}" />
+                                    <f:ajax listener="#{inpatientComparisonBean.showResult()}" execute="@form" render="leftResult" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showResultAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="provider" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="leftResult">
+                            <h:panelGroup style="font-size:1.1em;width:100%;margin-top:2%;" 
+                                          rendered="#{not empty inpatientComparisonBean.result}">
+                                <h4>Inpatient Charge</h4>
+                                <table class="result ui-corner-all">
+                                    <tr class="hospital">
+                                        <th colspan="2"><h:outputText value="${inpatientComparisonBean.result.provider.name}"/></th>
+                                    </tr>
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${inpatientComparisonBean.result.provider.street}"/></td>
+                                    </tr>
+
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${inpatientComparisonBean.result.provider.city}, "/>
+                                            <h:outputText value="${inpatientComparisonBean.result.provider.state} "/>
+                                            <h:outputText value="${inpatientComparisonBean.result.provider.zipCode}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1">
+                                            <h:commandButton styleClass="button ui-button" value="View Map" action="#{mapBean.viewMap}" >
+                                                <f:setPropertyActionListener target="#{mapBean.locationStreetAndCity}" 
+                                                                             value="${inpatientComparisonBean.result.provider.street}, ${inpatientComparisonBean.result.provider.city}, " />
+                                                <f:setPropertyActionListener target="#{mapBean.locationState}" 
+                                                                             value="${inpatientComparisonBean.result.provider.state}" />
+                                                <f:setPropertyActionListener target="#{mapBean.mapLocationName}" 
+                                                                             value="${inpatientComparisonBean.result.provider.name}" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td colspan="1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pricesHeader" colspan="2"><h:outputText value="${inpatientComparisonBean.result.drg.drgDefinition}"/></th>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Charges:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${inpatientComparisonBean.result.drg.avgCharges}"/></td>
+                                    </tr> 
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Payments:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${inpatientComparisonBean.result.drg.avgPayments}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Medicare Payments:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${inpatientComparisonBean.result.drg.avgMedicarePayments}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Charge Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${inpatientComparisonBean.result.drg.avgChargesPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Payment Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${inpatientComparisonBean.result.drg.avgPaymentsPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Medicare Payment Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${inpatientComparisonBean.result.drg.avgMedicarePaymentsPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <h:panelGroup id="rightCharge" styleClass="rightCharge">
+                    <h:panelGroup rendered="#{not empty inpatientComparisonBean.compareToStates}">
+                        <h:selectOneMenu style="font-size:1.1em;" id="secondState" styleClass="secondStateToCompare" value="#{inpatientComparisonBean.secondState}">
+                            <f:selectItem itemValue="" itemLabel="Choose a state" />
+                            <f:selectItems value="#{inpatientComparisonBean.states}" var="s" 
+                                           itemLabel="#{s}" itemValue="#{s}" />
+                            <f:ajax listener="#{inpatientComparisonBean.showCompareToCities()}" execute="@form" render="compareToCities compareToProviders rightResult" onevent="handleSecondStateToCompareSelectAjaxCall" />                  
+                        </h:selectOneMenu>
+                        <noscript>
+                            <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showCompareToCitiesAndReturn()}" value="Submit"></h:commandButton>
+                        </noscript>
+                        <h:message for="secondState" styleClass="error" />
+                        <h:panelGroup id="compareToCities">
+                            <h:panelGroup rendered="#{not empty inpatientComparisonBean.compareToCities}">
+                                <p><h:outputText value="#{inpatientComparisonBean.secondState}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="secondCity" styleClass="secondCityToCompare" value="#{inpatientComparisonBean.secondCity}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a city" />
+                                    <f:selectItems value="#{inpatientComparisonBean.compareToCities}" var="c" 
+                                                   itemLabel="#{c}" itemValue="#{c}" />
+                                    <f:ajax listener="#{inpatientComparisonBean.showCompareToProviders()}" execute="@form" render="compareToProviders rightResult" onevent="handleSecondCityToCompareSelectAjaxCall" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showCompareToProvidersAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="secondCity" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="compareToProviders">
+                            <h:panelGroup rendered="#{not empty inpatientComparisonBean.compareToProviders}">
+                                <p><h:outputText value="#{inpatientComparisonBean.secondCity}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="secondProvider" styleClass="secondProviderToCompare" value="#{inpatientComparisonBean.secondProviderId}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a provider" />
+                                    <f:selectItems value="#{inpatientComparisonBean.compareToProviders}" var="p" 
+                                                   itemLabel="#{p.name}" itemValue="#{p.id}" />
+                                    <f:ajax listener="#{inpatientComparisonBean.showSecondResult()}" execute="@form" render="rightResult" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{inpatientComparisonBean.showSecondResultAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="secondProvider" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="rightResult">
+                            <h:panelGroup style="font-size:1.1em;width:100%;margin-top:2%;" 
+                                          rendered="#{not empty inpatientComparisonBean.secondResult}">
+                                <h4>Inpatient Charge</h4>
+                                <table class="resultTwo ui-corner-all">
+                                    <tr class="hospital">
+                                        <th colspan="2"><h:outputText value="${inpatientComparisonBean.secondResult.provider.name}"/></th>
+                                    </tr>
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${inpatientComparisonBean.secondResult.provider.street}"/></td>
+                                    </tr>
+
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${inpatientComparisonBean.secondResult.provider.city}, "/>
+                                            <h:outputText value="${inpatientComparisonBean.secondResult.provider.state} "/>
+                                            <h:outputText value="${inpatientComparisonBean.secondResult.provider.zipCode}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1">
+                                            <h:commandButton styleClass="button ui-button" value="View Map" action="#{mapBean.viewMap}" >
+                                                <f:setPropertyActionListener target="#{mapBean.locationStreetAndCity}" 
+                                                                             value="${inpatientComparisonBean.secondResult.provider.street}, ${inpatientComparisonBean.secondResult.provider.city}, " />
+                                                <f:setPropertyActionListener target="#{mapBean.locationState}" 
+                                                                             value="${inpatientComparisonBean.secondResult.provider.state}" />
+                                                <f:setPropertyActionListener target="#{mapBean.mapLocationName}" 
+                                                                             value="${inpatientComparisonBean.secondResult.provider.name}" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td colspan="1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pricesHeader" colspan="2"><h:outputText value="${inpatientComparisonBean.secondResult.drg.drgDefinition}"/></th>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Charges:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${inpatientComparisonBean.secondResult.drg.avgCharges}"/></td>
+                                    </tr> 
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Payments:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${inpatientComparisonBean.secondResult.drg.avgPayments}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Medicare Payments:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${inpatientComparisonBean.secondResult.drg.avgMedicarePayments}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Charge Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${inpatientComparisonBean.secondResult.drg.avgChargesPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Payment Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${inpatientComparisonBean.secondResult.drg.avgPaymentsPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Medicare Payment Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${inpatientComparisonBean.secondResult.drg.avgMedicarePaymentsPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </div>
+        <div class="text">
+            <h3>About This Tool</h3>
+            <p>
+                This application allows you to compare charges, average payments, 
+                and average Medicare payments for inpatient care at 
+                two hospitals in the United States.  To use this tool, 
+                simply select the diagnosis-related group (DRG), the state, the city, 
+                the provider name for each hospital you want to compare.<br/><br/>
+                The data for this comparison tool was retrieved from the 2015 
+                <a target="_blank" href="https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Inpatient.html" >
+                    Medicare Provider Utilization and Payment Data</a> for inpatient 
+                hospital charges released by the Centers for Medicare &amp; Medicaid 
+                Services (CMS).  This data released by CMS includes all DRGs for Medicare patients.<br/><br/>
+                To find all inpatient charges and payment data for a specific DRG 
+                in a specific geographic region, you may select the navigation button labeled 
+                &quot;Find Inpatient Charges By Region&quot;.<br/><br/>
+                To find outpatient charges and payment data, you can navigate to 
+                &quot;Find Outpatient Charges By Region&quot; or &quot;Compare Two Outpatient Charges&quot;.<br/><br/>
+                The &quot;Statistics&quot; page allows you to view statistics for a chosen inpatient 
+                or outpatient charge.
+            </p>
+        </div>
+    </ui:define>
+</ui:composition>
+

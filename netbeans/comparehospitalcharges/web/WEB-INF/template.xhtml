@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <title><ui:insert name="title">Compare Hospital Charges</ui:insert></title>
+        <meta charset="utf-8"></meta>
+        <meta name="robots" content="index, follow"></meta>
+        <meta name="keywords" content="hospital, charges, providers, comparison, payments, diagnosis-related group"></meta>
+        <meta name="description" content="This site offers a few helpful tools to compare the costs of procedures performed by healthcare providers across the country.  The data for this site is taken directly from the latest inpatient charge data released by the Centers for Medicare &amp; Medicaid Services."></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <link rel="shortcut icon" href="#{request.contextPath}/images/favicon-hospital-o.ico" type="image/x-icon" />
+        <h:outputStylesheet library="css" name="main.css" />
+        <h:outputStylesheet library="css" name="media.css" />
+        <h:outputStylesheet library="js" name="jquery/jquery-ui.min.css" />
+        <h:outputStylesheet library="js" name="jquery/jquery-ui.structure.min.css" />
+        <h:outputStylesheet library="js" name="jquery/jquery-ui.theme.min.css" />
+        <h:outputStylesheet library="js" name="jquery/datatables.min.css" />
+        <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <![endif]-->
+        <script type="text/javascript" async="true" src="https://static.addtoany.com/menu/page.js">
+        </script>
+        <h:outputScript library="js" name="A2A.js" />
+        <h:outputScript library="js" name="jquery/jquery-1.7.js" />
+        <h:outputScript library="js" name="jquery/jquery-ui.min.js" />
+        <h:outputScript library="js" name="jquery/datatables.min.js" />
+        <h:outputScript library="js" name="main.js" />
+    </h:head>
+    <h:body>
+        <header>
+            <h1 id="title">Compare Hospital Charges</h1>
+            <nav id="nav-main">
+                <ul>
+                    <li><a href="#{request.contextPath}/inpatient">Find Inpatient Charges by Region</a></li>
+                    <li><a href="#{request.contextPath}/inpatient/comparetwo">Compare Two Inpatient Charges</a></li>
+                    <li><a href="#{request.contextPath}/outpatient">Find Outpatient Charges By Region</a></li>
+                    <li><a href="#{request.contextPath}/outpatient/comparetwo">Compare Two Outpatient Charges</a></li>
+                    <li><a href="#{request.contextPath}/statistics">Statistics</a></li>                
+                </ul>
+            </nav>
+        </header>
+        <!-- AddToAny BEGIN -->
+        <div id="share" class="a2a_kit a2a_kit_size_32 a2a_default_style" data-a2a-url="http://www.healthcare-topics.com/hospitalcharges" data-a2a-title="Compare Hospital Charges">
+            <a class="a2a_dd" href='https://www.addtoany.com/share'></a>
+            <a class="a2a_button_facebook"></a>
+            <a class="a2a_button_twitter"></a>
+            <a class="a2a_button_google_plus"></a>
+        </div>
+        <!-- AddToAny END -->
+        <section class="pagecontent"><ui:insert name="content">Default content</ui:insert></section>
+        <footer id="site-info">
+            <!--<nav id="nav-info">
+              <ul>
+                  <li><a href="<c:url value='/about'/>">About Us</a></li>
+                <li><a href="<c:url value='/contact'/>">Contact Us</a></li>
+              </ul>
+            </nav>
+    
+            <p class="slogan"></p>-->
+
+            <!--<p class="copyright">Copyright &copy; 2015 Compare Hospital Charges</p>-->
+        </footer>
+    </h:body>
+</html>
+

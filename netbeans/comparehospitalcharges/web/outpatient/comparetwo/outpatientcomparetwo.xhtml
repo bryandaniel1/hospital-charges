@@ -1,0 +1,288 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="content" >
+        <h2>Compare Two Outpatient Charges</h2>
+        <div class="compare">
+            <h:form>
+                <div style="width:100%;">
+                    <h:selectOneMenu style="font-size:1.1em;" id="apc" styleClass="apcsToCompare" value="#{outpatientComparisonBean.apcId}">
+                        <f:selectItem itemValue="" itemLabel="Choose an ambulatory payment classification" />
+                        <f:selectItems value="#{outpatientComparisonBean.apcs}" var="a" 
+                                       itemLabel="#{a.apcDefinition}" itemValue="#{a.apcId}" />
+                        <f:ajax listener="#{outpatientComparisonBean.showStates()}" execute="@form" render="apcChoice leftCharge rightCharge" onevent="handleComparisonSelectAjaxCall" />                  
+                    </h:selectOneMenu>
+                    <noscript>
+                        <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showStatesAndReturn()}" value="Submit"></h:commandButton>
+                    </noscript>
+                    <h:message for="apc" styleClass="error" />
+                </div>
+                <h:panelGroup id="apcChoice">
+                    <h:panelGroup rendered="#{not empty outpatientComparisonBean.apcDefinition}">
+                        <h3 class="compare">#{outpatientComparisonBean.apcDefinition}</h3>                    
+                    </h:panelGroup>                    
+                </h:panelGroup>
+
+                <h:panelGroup id="leftCharge" styleClass="leftCharge">
+                    <h:panelGroup rendered="#{not empty outpatientComparisonBean.states}">
+                        <h:selectOneMenu style="font-size:1.1em;" id="state" styleClass="stateToCompare" value="#{outpatientComparisonBean.state}">
+                            <f:selectItem itemValue="" itemLabel="Choose a state" />
+                            <f:selectItems value="#{outpatientComparisonBean.states}" var="s" 
+                                           itemLabel="#{s}" itemValue="#{s}" />
+                            <f:ajax listener="#{outpatientComparisonBean.showCities()}" execute="@form" render="cities providers leftResult" onevent="handleStateToCompareSelectAjaxCall" />                  
+                        </h:selectOneMenu>
+                        <noscript>
+                            <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showCitiesAndReturn()}" value="Submit"></h:commandButton>
+                        </noscript>
+                        <h:message for="state" styleClass="error" />
+                        <h:panelGroup id="cities">
+                            <h:panelGroup rendered="#{outpatientComparisonBean.state eq 'MD'}">
+                                <p>Outpatient data for Maryland hospitals is not provided as this  
+                                    state operates under a Medicare waiver and is exempt from 
+                                    the Outpatient Prospective Payment System. Hospitals in Maryland 
+                                    are reimbursed according to the 
+                                    <a target="_blank" href="http://innovation.cms.gov/initiatives/Maryland-All-Payer-Model/">Maryland All-Payer Model</a>.
+                                </p>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{not empty outpatientComparisonBean.cities}">
+                                <p><h:outputText value="#{outpatientComparisonBean.state}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="city" styleClass="cityToCompare" value="#{outpatientComparisonBean.city}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a city" />
+                                    <f:selectItems value="#{outpatientComparisonBean.cities}" var="c" 
+                                                   itemLabel="#{c}" itemValue="#{c}" />
+                                    <f:ajax listener="#{outpatientComparisonBean.showProviders()}" execute="@form" render="providers leftResult" onevent="handleCityToCompareSelectAjaxCall" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showProvidersAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="city" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="providers">
+                            <h:panelGroup rendered="#{not empty outpatientComparisonBean.providers}">
+                                <p><h:outputText value="#{outpatientComparisonBean.city}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="provider" styleClass="providerToCompare" value="#{outpatientComparisonBean.providerId}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a provider" />
+                                    <f:selectItems value="#{outpatientComparisonBean.providers}" var="p" 
+                                                   itemLabel="#{p.name}" itemValue="#{p.id}" />
+                                    <f:ajax listener="#{outpatientComparisonBean.showResult()}" execute="@form" render="leftResult" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showResultAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="provider" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="leftResult">
+                            <h:panelGroup style="font-size:1.1em;width:100%;margin-top:2%;" 
+                                          rendered="#{not empty outpatientComparisonBean.result}">
+                                <h4>Outpatient Charge</h4>
+                                <table class="result ui-corner-all">
+                                    <tr class="hospital">
+                                        <th colspan="2"><h:outputText value="${outpatientComparisonBean.result.provider.name}"/></th>
+                                    </tr>
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${outpatientComparisonBean.result.provider.street}"/></td>
+                                    </tr>
+
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${outpatientComparisonBean.result.provider.city}, "/>
+                                            <h:outputText value="${outpatientComparisonBean.result.provider.state} "/>
+                                            <h:outputText value="${outpatientComparisonBean.result.provider.zipCode}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1">
+                                            <h:commandButton styleClass="button ui-button" value="View Map" action="#{mapBean.viewMap}" >
+                                                <f:setPropertyActionListener target="#{mapBean.locationStreetAndCity}" 
+                                                                             value="${outpatientComparisonBean.result.provider.street}, ${outpatientComparisonBean.result.provider.city}, " />
+                                                <f:setPropertyActionListener target="#{mapBean.locationState}" 
+                                                                             value="${outpatientComparisonBean.result.provider.state}" />
+                                                <f:setPropertyActionListener target="#{mapBean.mapLocationName}" 
+                                                                             value="${outpatientComparisonBean.result.provider.name}" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td colspan="1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pricesHeader" colspan="2"><h:outputText value="${outpatientComparisonBean.result.apc.apcDefinition}"/></th>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Charges:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${outpatientComparisonBean.result.apc.avgCharges}"/></td>
+                                    </tr> 
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Payments:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${outpatientComparisonBean.result.apc.avgPayments}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Charge Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${outpatientComparisonBean.result.apc.avgChargesPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Payment Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${outpatientComparisonBean.result.apc.avgPaymentsPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <h:panelGroup id="rightCharge" styleClass="rightCharge">
+                    <h:panelGroup rendered="#{not empty outpatientComparisonBean.compareToStates}">
+                        <h:selectOneMenu style="font-size:1.1em;" id="secondState" styleClass="secondStateToCompare" value="#{outpatientComparisonBean.secondState}">
+                            <f:selectItem itemValue="" itemLabel="Choose a state" />
+                            <f:selectItems value="#{outpatientComparisonBean.states}" var="s" 
+                                           itemLabel="#{s}" itemValue="#{s}" />
+                            <f:ajax listener="#{outpatientComparisonBean.showCompareToCities()}" execute="@form" render="compareToCities compareToProviders rightResult" onevent="handleSecondStateToCompareSelectAjaxCall" />                  
+                        </h:selectOneMenu>
+                        <noscript>
+                            <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showCompareToCitiesAndReturn()}" value="Submit"></h:commandButton>
+                        </noscript>
+                        <h:message for="secondState" styleClass="error" />
+                        <h:panelGroup id="compareToCities">
+                            <h:panelGroup rendered="#{outpatientComparisonBean.secondState eq 'MD'}">
+                                <p>Outpatient data for Maryland hospitals is not provided as this  
+                                    state operates under a Medicare waiver and is exempt from 
+                                    the Outpatient Prospective Payment System. Hospitals in Maryland 
+                                    are reimbursed according to the 
+                                    <a target="_blank" href="http://innovation.cms.gov/initiatives/Maryland-All-Payer-Model/">Maryland All-Payer Model</a>.
+                                </p>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{not empty outpatientComparisonBean.compareToCities}">
+                                <p><h:outputText value="#{outpatientComparisonBean.secondState}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="secondCity" styleClass="secondCityToCompare" value="#{outpatientComparisonBean.secondCity}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a city" />
+                                    <f:selectItems value="#{outpatientComparisonBean.compareToCities}" var="c" 
+                                                   itemLabel="#{c}" itemValue="#{c}" />
+                                    <f:ajax listener="#{outpatientComparisonBean.showCompareToProviders()}" execute="@form" render="compareToProviders rightResult" onevent="handleSecondCityToCompareSelectAjaxCall" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showCompareToProvidersAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="secondCity" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="compareToProviders">
+                            <h:panelGroup rendered="#{not empty outpatientComparisonBean.compareToProviders}">
+                                <p><h:outputText value="#{outpatientComparisonBean.secondCity}" /></p>
+                                <h:selectOneMenu style="font-size:1.1em;" id="secondProvider" styleClass="secondProviderToCompare" value="#{outpatientComparisonBean.secondProviderId}">
+                                    <f:selectItem itemValue="" itemLabel="Choose a provider" />
+                                    <f:selectItems value="#{outpatientComparisonBean.compareToProviders}" var="p" 
+                                                   itemLabel="#{p.name}" itemValue="#{p.id}" />
+                                    <f:ajax listener="#{outpatientComparisonBean.showSecondResult()}" execute="@form" render="rightResult" />                  
+                                </h:selectOneMenu>
+                                <noscript>
+                                    <h:commandButton styleClass="button ui-button" action="#{outpatientComparisonBean.showSecondResultAndReturn()}" value="Submit"></h:commandButton>
+                                </noscript>
+                                <h:message for="secondProvider" styleClass="error" />
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="rightResult">
+                            <h:panelGroup style="font-size:1.1em;width:100%;margin-top:2%;" 
+                                          rendered="#{not empty outpatientComparisonBean.secondResult}">
+                                <h4>Outpatient Charge</h4>
+                                <table class="resultTwo ui-corner-all">
+                                    <tr class="hospital">
+                                        <th colspan="2"><h:outputText value="${outpatientComparisonBean.secondResult.provider.name}"/></th>
+                                    </tr>
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${outpatientComparisonBean.secondResult.provider.street}"/></td>
+                                    </tr>
+
+                                    <tr class="hospital">
+                                        <td colspan="2"><h:outputText value="${outpatientComparisonBean.secondResult.provider.city}, "/>
+                                            <h:outputText value="${outpatientComparisonBean.secondResult.provider.state} "/>
+                                            <h:outputText value="${outpatientComparisonBean.secondResult.provider.zipCode}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1">
+                                            <h:commandButton styleClass="button ui-button" value="View Map" action="#{mapBean.viewMap}" >
+                                                <f:setPropertyActionListener target="#{mapBean.locationStreetAndCity}" 
+                                                                             value="${outpatientComparisonBean.secondResult.provider.street}, ${outpatientComparisonBean.secondResult.provider.city}, " />
+                                                <f:setPropertyActionListener target="#{mapBean.locationState}" 
+                                                                             value="${outpatientComparisonBean.secondResult.provider.state}" />
+                                                <f:setPropertyActionListener target="#{mapBean.mapLocationName}" 
+                                                                             value="${outpatientComparisonBean.secondResult.provider.name}" />
+                                            </h:commandButton>
+                                        </td>
+                                        <td colspan="1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pricesHeader" colspan="2"><h:outputText value="${outpatientComparisonBean.secondResult.apc.apcDefinition}"/></th>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Charges:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${outpatientComparisonBean.secondResult.apc.avgCharges}"/></td>
+                                    </tr> 
+                                    <tr>
+                                        <td class="pricesLabel" colspan="1">Average Payments:</td>
+                                        <td class="prices" colspan="1">&#36;<h:outputText value="${outpatientComparisonBean.secondResult.apc.avgPayments}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Charge Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${outpatientComparisonBean.secondResult.apc.avgChargesPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">
+                                            Average Payment Percentile Rank:
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="percentile">
+                                            <h:outputText value="${outpatientComparisonBean.secondResult.apc.avgPaymentsPercentileRank}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </div>
+        <div class="text">
+            <h3>About This Tool</h3>
+            <p>
+                This application allows you to compare charges and average Medicare 
+                payments for outpatient care by two providers in the United States.  
+                To use this tool, simply select the ambulatory payment classification (APC), 
+                the state, the city, and the provider name for each provider you want to compare.<br/><br/>
+                The data for this comparison tool was retrieved from the 2015 
+                <a target="_blank" href="https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Outpatient.html" >
+                    Medicare Provider Utilization and Payment Data</a> for outpatient 
+                hospital charges released by the Centers for Medicare &amp; Medicaid 
+                Services (CMS).  This data released by CMS includes the 28 most common APCs 
+                for Medicare patients.<br/><br/>
+                To find all outpatient charges and payment data for a specific APC 
+                in a specific geographic region, you may select the navigation button labeled 
+                &quot;Find Outpatient Charges By Region&quot;.<br/><br/>
+                To find inpatient charges and payment data, you can navigate to 
+                &quot;Find Inpatient Charges By Region&quot; or &quot;Compare Two Inpatient Charges&quot;.<br/><br/>
+                The &quot;Statistics&quot; page allows you to view statistics for a chosen inpatient 
+                or outpatient charge.
+            </p>
+        </div>
+    </ui:define>
+</ui:composition>

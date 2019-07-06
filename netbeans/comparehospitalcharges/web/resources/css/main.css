@@ -1,0 +1,265 @@
+/* 
+    Created on : Aug 2, 2015, 10:40:32 AM
+    Author     : Bryan
+*/
+
+html{
+    background-image: radial-gradient(#f0f0f0, #c6deff);
+    height: 100%;
+}
+
+#share{
+    margin: 2% 0% 0% 5%;
+}
+
+/* Main navigation ***/
+#nav-main {
+    clear: both;
+    text-transform: uppercase;
+    transition: font-size .2s ease-in-out;
+    margin: 0% 2% 0% 2%;
+}
+#nav-main ul {
+    margin: 0;
+    list-style: none;
+    width: 100%;
+}
+#nav-main li {
+    float: left;  
+    text-align: center;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 4px rgba(0,0,0,.25);  
+    background-color: #fc0;
+    background-image: linear-gradient(to bottom, #FFFFFF 60%, #c6deff 100%);
+}
+#nav-main a:link,
+#nav-main a:visited {
+    display: block;
+    padding: .5em 10px;
+    text-decoration: none;
+}
+#nav-main:after {
+    content: ".";
+    display: block;
+    clear: both;
+    height: 0;
+    visibility: hidden;
+}
+#nav-main li:hover {
+    background-image: linear-gradient(to bottom, #FFFFFF 60%, #FFFFFF 100%);
+}
+
+h1, h2, h3, h4, select, .dataTableHeader {
+    color: #0057ad;
+    text-align: center;
+}
+
+/*Content backdrop for main pages*/
+.pagecontent{
+    float: left;
+    display: block;
+    margin: 2%;    
+    background-color: #F0F0F0;
+    border: 1px solid black;
+    height: 100%;
+    box-shadow: 10px 10px 4px rgba(0,0,0,.25);
+    overflow: auto;
+}
+
+.button{
+    font-size:0.95em;
+}
+
+select{
+    font-size: 1.2em;
+    color: black;
+}
+
+option{
+    text-align: left;
+}
+
+p, table{
+    font-size: 1.1em;
+}
+
+tr{
+    width: 100%;
+}
+
+.prices{
+    color: green;
+}
+
+.leftCharge, .rightCharge{
+    margin: 1% 2% 2% 2%;
+    padding: 1% 2% 2% 2%;
+    width: 42%;
+    float: left;
+}
+
+#regionCharges{
+    margin: 1% 2% 2% 12%;
+    padding: 1% 2% 2% 2%;
+    width: 65%;
+    float: left;
+}
+
+.result, .resultTwo{
+    margin: 2%;
+    padding: 2%;
+    border: 1px solid #000000;
+    border-collapse: separate;
+    background-color: white;
+    width: 90%;
+    box-shadow: 10px 10px 4px rgba(0,0,0,.25);
+    table-layout: fixed;
+}
+
+.providers{
+    width: 70%;
+}
+
+.drgsToCompare, .apcsToCompare{
+    width: 90%;
+}
+
+.error{
+    color: red;
+}
+
+#site-info{
+    clear: both;
+    margin: 25% 5% 5% 5%;
+}
+
+.text{
+    clear: both;
+    margin: 25% 25% 5% 5%;
+}
+
+.percentile{
+    color: green;
+    text-align: right;
+    font-size: 2em;
+}
+
+.compare{
+    margin: 2% 5% 1% 5%;
+    text-align: center;
+}
+
+/* Statistics style */
+.statscontent{
+    width: 96%
+}
+
+.drgStatSelect, .apcStatSelect{
+    width: 80%;
+    margin: 3%;
+}
+
+.statsList li{
+    margin-left: 10%;
+    margin-bottom: 2%;
+    list-style: none;
+    float: left;
+    clear: left;
+}
+
+.statsListHeader{
+    margin-left: 10%;
+    float: left;
+    clear: left;
+}
+
+#leftSelect, #rightSelect{
+    margin: 2%;
+    padding: 2%;
+    width: 40%;
+    float: left;
+}
+
+#leftSelect{
+    margin-right: 0%;
+}
+
+#rightSelect{
+    margin-left: 0%;
+}
+
+#mid{
+    margin: 2% 0%;
+    padding: 2% 2%;
+    float: left;
+}
+
+#maxCharge, #minCharge{
+    margin: 2%;
+    padding: 2%;
+    width: 42%;
+    float: left;
+}
+
+#minCharge{
+    clear: left;
+}
+
+.chart{
+    margin: 3% 15%;
+    clear: both;
+}
+
+img{
+    box-shadow: 10px 10px 4px rgba(0,0,0,.25);
+}
+/*done with statistics style*/
+
+/* Map styles */
+/*Content backdrop for map pages*/
+#mapLocation{
+    text-align: center;
+}
+
+#hospitalMap {
+    height: 680px;
+    width: 1200px;
+    margin: 2%;
+    float: left;
+}
+
+/* Removing useless grey grid lines from the map */
+#body {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.left {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.content {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+img {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}/*done removing grid lines*/
+/*done with map styles*/
+
+#results{
+    width: 100%;
+}
+
+/*exception pages*/
+.exceptionHeader{
+    padding: 0% 40% 0% 40%;
+}
+
+.exceptionDetails{
+    padding-left: 10%;
+    padding-right: 40%;
+}

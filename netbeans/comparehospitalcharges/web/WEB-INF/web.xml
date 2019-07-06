@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <!-- the references for the databases -->
+    <resource-ref>
+        <res-ref-name>jdbc/hospital_hospitalcharges</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+    <resource-ref>
+        <res-ref-name>jdbc/hospital_outpatient</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+    <!-- filters -->
+    <filter>
+        <filter-name>HeadersFilter</filter-name>
+        <filter-class>com.daniel.hospitalcharges.filter.HeadersFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>TimeOutFilter</filter-name>
+        <filter-class>com.daniel.hospitalcharges.filter.TimeOutFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HeadersFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>TimeOutFilter</filter-name>
+        <url-pattern>/statistics</url-pattern>
+        <url-pattern>/drawchart</url-pattern>
+    </filter-mapping>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>bluesky</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>StatisticsServlet</servlet-name>
+        <servlet-class>com.daniel.hospitalcharges.servlet.StatisticsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ChartAndGraphServlet</servlet-name>
+        <servlet-class>com.daniel.hospitalcharges.servlet.ChartAndGraphServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StatisticsServlet</servlet-name>
+        <url-pattern>/statistics</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChartAndGraphServlet</servlet-name>
+        <url-pattern>/drawchart</url-pattern>
+    </servlet-mapping>
+    <!-- The custom error pages -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/errorpages/error-404.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/errorpages/error-500.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/WEB-INF/errorpages/expired.xhtml</location>
+    </error-page>
+    <!-- timeout -->
+    <session-config>
+        <session-timeout>
+            10
+        </session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>inpatientregion.xhtml</welcome-file>
+        <welcome-file>inpatientcomparetwo.xhtml</welcome-file>
+        <welcome-file>outpatientregion.xhtml</welcome-file>
+        <welcome-file>outpatientcomparetwo.xhtml</welcome-file>
+    </welcome-file-list>
+</web-app>

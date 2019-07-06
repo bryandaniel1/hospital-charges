@@ -1,0 +1,41 @@
+/* 
+    Created on : Sep 18, 2016, 4:07:52 PM
+    Author     : Bryan Daniel
+*/
+/*For small mobile devices*/
+@media handheld, screen and (max-width : 767px){
+    #nav-main {
+        margin: 0% 6% 0% -6%;
+    }    
+    #rightLink, #centerLink{
+        border-left: 2px solid #000000;
+        padding: 0% 2% 0% 0%;
+    }
+    .leftCharge, .rightCharge, 
+    #leftSelect, #rightSelect,
+    .maxCharge, .minCharge {
+        margin: 2%;
+        padding: 2%;
+        width: 95%;
+        float: left;
+        clear: both;
+    }
+    .result, .resultTwo{
+        table-layout: fixed;
+        margin: 2% 0% 0% 0%;
+        padding: 2%;
+        border: 1px solid #000000;
+        background-color: white;
+    }
+    #regionCharges{
+        margin: 1%;
+        padding: 1%;
+        width: 95%;
+        float: left;
+    }
+    .regionTable{
+        margin: 1%;
+        padding: 1%;
+        width: 100%;
+    }
+}/*done with small mobile devices*/
