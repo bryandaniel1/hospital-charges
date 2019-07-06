@@ -1,4 +1,4 @@
-# compare-hospital-charges
+# hospital-charges
 This source code can be used to build a web site for comparing inpatient and outpatient hospital charges in the United States based on the Centers for Medicare &amp; Medicaid Services (CMS) 2015 <a target="_blank" href="https://www.cms.gov/Research-Statistics-Data-and-Systems/Statistics-Trends-and-Reports/Medicare-Provider-Charge-Data/Inpatient.html">Medicare Provider Utilization and Payment Data </a>.
 
 <figure>
